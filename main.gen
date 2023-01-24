@@ -1,0 +1,42 @@
+/*[[[cog
+import cog
+"""
+This file is generated into a proper main file in the build directory at CMake
+build time.
+
+The following strings are externally provided by CMake at build time:
+BUILD_DIR, ART0_DIR, HW_CFG
+"""
+
+BEG = "#include \""
+def PrintFileInclude(DIR, FILENAME):
+  cog.outl("%s%s/%s%s" %(BEG, DIR, FILENAME, "\""))
+  return
+
+if not 'HW_CFG' in globals():
+  HW_CFG = 'ginger'
+
+hw_config_word = {
+  "ginger" : 0x9945,
+  "devboard" : 0x9809,
+}.get(HW_CFG.lower(), "#error -- HW_CFG was not defined!  (See main.gen)")
+
+# Print ASM includes
+PrintFileInclude(ART0_DIR, "XInC2.asm")
+
+# Print firmware header
+cog.outl("@ = 0xC000")
+cog.outl("bra ProgramSPIEEPROM")
+cog.outl(str(hw_config_word))
+
+# Print code section
+PrintFileInclude(ART0_DIR, "XInC2_Entry.asm")
+PrintFileInclude(BUILD_DIR, "code.asm")
+
+# Align data section to 0x800 boundary, then print it
+cog.outl("@ = (@ + 0x0800-1) & -0x0800")
+PrintFileInclude(BUILD_DIR, "data.asm")
+PrintFileInclude(ART0_DIR, "XInC2_Thread_Definitions.asm")
+cog.outl("@ = 0xFF80") #Boundary between data and short data
+]]]*/
+//[[[end]]]
