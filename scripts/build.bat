@@ -1,18 +1,23 @@
 @echo off
+
+if "%1"=="-ni" (
+    cd ../build
+)
+
 echo "building ..."
-if "%1"=="-l" (
+if "%2"=="-l" (
     echo "linking..."
     cmake -G "MinGW Makefiles" ../
     echo "linking finished"
-) else if NOT "%1"=="-l" (
+) else if NOT "%2"=="-l" (
     echo "no linking"
 )
 echo "making..."
 make
 echo "making done"
-if "%2"=="-c" (
+if "%3"=="-c" (
     echo "deploying..."
-    sxc-xdt --hid --hex Quadcopter.hex %3
+    sxc-xdt --hid --hex Quadcopter.hex %4
     echo "deploying finished"
 )
 echo "build finished"
