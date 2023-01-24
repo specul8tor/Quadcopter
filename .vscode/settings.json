@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "time_funcs.h": "c",
+        "buffered_button.h": "c",
+        "struct_aliases.h": "c",
+        "structs.h": "c",
+        "xpd.h": "c",
+        "thread.h": "c",
+        "ioconfig.h": "c",
+        "stdlib.h": "c"
+    }
+}
