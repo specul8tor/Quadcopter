@@ -21,3 +21,4 @@ if "%3"=="-c" (
     echo "deploying finished"
 )
 echo "build finished"
+cd ../scripts
