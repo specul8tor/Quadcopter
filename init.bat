@@ -5,6 +5,4 @@ cd scripts
 echo "Setting up compilier path..."
 python setConfig.py %1
 echo "Finished setting compilier path"
-cd ../build/
-../scripts/build -i -l -c
-cd ../scripts
+build -l -c
