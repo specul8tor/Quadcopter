@@ -73,7 +73,7 @@ static void* pwm_drive_thread(void* ptr)
 
 int main(void)
 {
-  xpd_puts("Hello World\n");
+  xpd_puts("Hello Max\n");
   init_clock();
   for (size_t i = 0; i < kNumPWMLEDs; ++i) {
     io_set_config(DEFAULT_BUTTON_CFG, all_leds[i].button.io_port);
