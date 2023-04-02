@@ -5,26 +5,30 @@
 #include "IRadio.h"
 #include "WInStream.h"
 #include "WOutStream.h"
+#include <chrono>
+#include <thread>
+
+using namespace std;
 
 uint16_t first;
 static const uint16_t baud_rate = 21844;
 static const uint16_t start_word = 0xCCCC;
 
 
-
 int main(){
 
     //establish BBU class (it is a )
     BaseBandUnit<BBU0> BBU(
-        uint16_t brg, // replace with appropriate value
-        uint16_t cfg0 = BBU_enable | , 
-        uint16_t start_word = 0, 
-        uint16_t cfg1 = 0
+        uint16_t baud_rate, // replace with appropriate value
+        uint16_t cfg0 = BBU_enable | BBU_TX_ENABLE | BBU_USE_CLK_IN | BBU_CLK_DETECT_ENABLE | BBU_CLK_ENABLE | BBU_CLK_IN_RISING_EDGE | BBU_TX_MODE_RET_TO_ZERO | BBU_BIDIRECTION_ENABLE | BBU_EXT_CLK_TO_INC,
+        uint16_t start_word, 
+        uint16_t cfg1 = 0,
         );
 
     // cfg0 depending on what I put in it will be put into the bb0 register check user guide
     // BBU.h we can or the bits
     // baud rate target is 2.048 mb/second // use formula in user guide
+    // Bit rate = (sys_clk/8) * (1/(65535+1)) *(BBUbrg + 1) 
 
     using radioSPI = SerialPortInterface<SPI1>;
     radioSPI spi;
@@ -43,14 +47,20 @@ int main(){
     SpiWithChipSelect<decltype(spi), decltype(radio_cs)>  spi_with_cs(spi, radio_cs);
 
     //define a radio object
-    GinsengPAControl pa_control;
+    using PAControl = IPAControl<PAControlTy>;
+    PAControl pa_control;
+
+    //define configure parameters
+    using ConfigParam = StandardA7125ConfigParams;
+
 
     A7125Radio<
-        GinsengPAControl,
+        ConfigParam,
+        PAControl,
         SpiWithChipSelect,
         BaseBandUnit<BBU0>,
         PortE,
-        decltype(radio_bbu_dir)
+        decltype(radio_bbu_direction)
     > radio(
         pa_control, spi_with_cs, BBU, radio_bbu_direction
     );
@@ -58,8 +68,12 @@ int main(){
     //define the baseband
     //establish a clock type
 
-    DummyCrc fec;
-    DummyCrc crc;
+    EncoderStrategy Edata;
+
+    Edata.Configure = 1;
+    Edata.Reset = 4;
+    // what are the crc
+    // forward error correction
 
     BaseBand<BaseBandUnit<BBU0>> base_band(BBU, start_word);
     std::array<uint16_t, 20> data;
@@ -74,12 +88,12 @@ int main(){
             }
         }
     
-        wait_1ms();
+        this_thread::sleep_for(std::chrono::milliseconds(1)); // wait for a milisecond
 
         radio.SwitchToTransmit(0);
 
-        if (auto wout = base_band.ForceAcquireOutputStream()) {
-            for (auto& elem: data_array) {
+        if (auto wout = base_band.TryAcquireOutputStream()) {
+            for (auto& elem: data) {
                 wout.PushWordWithoutEncoding(elem);
             }
         }
