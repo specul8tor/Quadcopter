@@ -4,7 +4,10 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
-                "C:\\Program Files\\SXC\\include\\sxc-lib\\"
+                "C:\\Users\\cesar\\OneDrive\\Desktop\\Capstone\\XInC2 Ressoures 062019\\elevenengineering-libspine-wireless-7c88ba047401\\common\\**",
+                "C:\\Program Files\\SXC\\include\\**",
+                "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.22621.0\\**",
+                "${workspaceFolder}/inc"
             ],
             "defines": [
                 "_DEBUG",
@@ -12,7 +15,7 @@
                 "_UNICODE"
             ],
             "windowsSdkVersion": "10.0.18362.0",
-            "compilerPath": "/XInC2 Ressoures 062019/XInC2 Ressoures 062019/MinGW/bin/g++.exe",
+            "compilerPath": "C://Users//cesar//OneDrive//Desktop//Capstone//XInC2 Ressoures 062019//XInC2 Ressoures 062019//MinGW//bin//g++.exe",
             "cStandard": "c17",
             "cppStandard": "c++17",
             "intelliSenseMode": "windows-gcc-x86"
