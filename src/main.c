@@ -25,12 +25,11 @@ typedef struct PWM_LED {
   GlobalPin const pwm_out;
   const uint16_t period_ms; //if >100ms, beware of overflow in duty cycle funcs
 } PWM_LED;
-#define red_pwm { SW0, LED5, 100 }
-#define green_pwm { SW1, LED6, 100 }
-#define blue_pwm { SW2, LED3, 100 }
-#define motor {SW1, LED1, 100}
 
-static PWM_LED all_leds[] = { red_pwm, green_pwm, blue_pwm, motor };
+#define green_pwm { SW2, LED1, 100 }
+#define blue_pwm { SW2, LED2, 100 }
+
+static PWM_LED all_leds[] = { green_pwm, blue_pwm };
 static const uint16_t kNumPWMLEDs = sizeof(all_leds)/sizeof(*all_leds);
 static const uint16_t kPWMThrdOffset = 1;
 
@@ -44,17 +43,9 @@ static void pwm_drive_cycle(enum DutyCycleSelect duty, PWM_LED const * pwm_led)
   else
     on_ms = 0;
   globalPin_write(ON, &pwm_led->pwm_out);
-  wait_ms(250);
+  wait_ms(1000);
   globalPin_write(OFF, &pwm_led->pwm_out);
-  // wait_ms(pwm_led->period_ms - on_ms);
-  wait_ms(250);
-  // globalPin_write(ON, &pwm_led->pwm_out);
-  // wait_ms(10);
-  // globalPin_write(ON, &pwm_led->pwm_out);
-  // wait_ms(19);
-  // globalPin_write(OFF, &pwm_led->pwm_out);
-  // wait_ms(1);
-
+  wait_ms(1000);
 }
 
 static void* pwm_drive_thread(void* ptr)

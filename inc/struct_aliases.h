@@ -17,11 +17,13 @@
 #define SW2 { GPIO_A, io_PA, 0x4, BUTTON_POLARITY }
 #define SW3 { GPIO_A, io_PA, 0x8, BUTTON_POLARITY }
 
-#define LED1 { GPIO_D, io_PD4, 0x10, LED_POLARITY }
-#define LED2 { GPIO_D, io_PD5, 0x20, LED_POLARITY }
+#define LED1 { GPIO_A, io_PA, 0x1, LED_POLARITY }
+#define LED2 { GPIO_A, io_PA, 0x2, LED_POLARITY }
 #define LED3 { GPIO_D, io_PD6, 0x40, LED_POLARITY }
 #define LED4 { GPIO_D, io_PD7, 0x80, LED_POLARITY }
 #define LED5 { GPIO_C, io_PC0, 0x1, LED_POLARITY }
 #define LED6 { GPIO_C, io_PC1, 0x2, LED_POLARITY }
+#define LED7 { GPIO_D, io_PD4, 0x10, LED_POLARITY }
+#define LED8 { GPIO_D, io_PD5, 0x20, LED_POLARITY }
 
 #endif //_STRUCT_ALIASES_H_
