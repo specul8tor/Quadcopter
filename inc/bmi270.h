@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <I2C.h>
 #include <XPD.h>
+#include "globals.h"
 #include "utils.h"
 
 #define BMI270_CHIP_ID_REG    0x00
@@ -25,6 +26,7 @@
 #define GYR_Z_LSB             0x16
 #define GYR_Z_MSB             0x17
 
+#ifdef CONFIG_FILE
 static uint16_t bmi270_config_file[] = {
     0xc8, 0x2e, 0x00, 0x2e, 0x80, 0x2e, 0x3d, 0xb1, 0xc8, 0x2e, 0x00, 0x2e, 0x80, 0x2e, 0x91, 0x03, 0x80, 0x2e, 0xbc,
     0xb0, 0x80, 0x2e, 0xa3, 0x03, 0xc8, 0x2e, 0x00, 0x2e, 0x80, 0x2e, 0x00, 0xb0, 0x50, 0x30, 0x21, 0x2e, 0x59, 0xf5,
@@ -459,6 +461,7 @@ static uint16_t bmi270_config_file[] = {
     0x00, 0xc1, 0x80, 0x2e, 0x00, 0xc1, 0x80, 0x2e, 0x00, 0xc1, 0x80, 0x2e, 0x00, 0xc1, 0x80, 0x2e, 0x00, 0xc1, 0x80,
     0x2e, 0x00, 0xc1
 };
+#endif
 
 #define SELECTED_FREQ 10000
 #define TICK_RATE 49152000 // sysclock is 49.152 MHz
@@ -467,15 +470,13 @@ static uint16_t bmi270_config_file[] = {
 #define i2c_pin_vals { GPIO_C, io_PC1, 0x2, Polar_ActiveLow },\
                      { GPIO_C, io_PC0, 0x1, Polar_ActiveLow }
 
-// #define CONFIG_FILE
-
 //pg 128 ITS 0x68 BUT IS 7 BIT ADDRESSING BUT R/W COUNTS AS A BIT SO THERFOR 8 BITS
 static const uint16_t bmiI2CAddr = 0x68 << 1;
 
 static const I2C_Pin_Pair bmi_pins = { i2c_pin_vals, bmiI2CAddr,TICKS_PER_CLK };
 static GlobalPin const * const global_pins[] = {&bmi_pins.scl, &bmi_pins.sda};
 
-static int bmi270_init(){
+static void bmi270_init(){
 
   //Initialize I2C pins
   for (size_t i = 0; i < 2; ++i) {
@@ -511,30 +512,35 @@ static int bmi270_init(){
   i2c_write_to_register(bmiI2CAddr, ACC_CONF, 0xA8, &bmi_pins);
   i2c_write_to_register(bmiI2CAddr, GYR_CONF, 0xE9, &bmi_pins);
   i2c_write_to_register(bmiI2CAddr, PWR_CONF_ADV_PWR_SAVE, 0x02, &bmi_pins);
+}
 
+static int get_IMU(){
+
+  // int16_t acce_gyro_data[12];
   uint8_t print_flag = 0;
-  int16_t data[12];
   int16_t vals[6];
-  xpd_puts("\n| GYRO Z | GYRO Y | GYRO X | ACCE Z | ACCE Y | ACCE X |\n");
+  int16_t * data = acce_gyro_data;
+  
+  xpd_puts("\n| ACCE X | ACCE Y | ACCE Z | GYRO X | GYRO Y | GYRO Z |\n");
+  // wait_ms(1000);
   while (1) {
-
-    for (uint8_t i = 0; i < 12; i++){
-      data[i] = i2c_read_value(bmiI2CAddr, GYR_Z_MSB-i,1, &bmi_pins); 
-    }
+    i2c_read_from_buffer(bmiI2CAddr, ACC_X_LSB, 12, data, &bmi_pins); 
 
     for (uint8_t i = 0; i < 6; i++){
-      vals[i] = (data[i]<<8) + data[i+1];
+      vals[i] = (data[i*2+1]<<8) + data[i*2];
+      //vals[i] = (*(data+i*2+1)<<8) + *(data+i*2);
     }
-
-    if (print_flag%2 == 0){
-      print_int("\r  ",vals[0], XPD_Flag_Hex, 0);
-      print_int("   ",vals[1], XPD_Flag_Hex, 0);
-      print_int("   ",vals[2], XPD_Flag_Hex, 0);
-      print_int("   ",vals[3], XPD_Flag_Hex, 0);
-      print_int("   ",vals[4], XPD_Flag_Hex, 0);
-      print_int("   ",vals[5], XPD_Flag_Hex, 0);
+#ifdef VERBOSE
+    if (print_flag % 10 == 0){
+      print_int("\r  ", vals[0], XPD_Flag_Hex, 0);
+      print_int("   ", vals[1], XPD_Flag_Hex, 0);
+      print_int("   ", vals[2], XPD_Flag_Hex, 0);
+      print_int("   ", vals[3], XPD_Flag_Hex, 0);
+      print_int("   ", vals[4], XPD_Flag_Hex, 0);
+      print_int("   ", vals[5], XPD_Flag_Hex, 0);
     }
     print_flag++;
+#endif
   }
   return 1;
 }

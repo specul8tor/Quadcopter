@@ -4,7 +4,9 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
-                "C:\\Program Files\\SXC\\include\\**"
+                "C:\\Program Files\\SXC\\include\\**",
+                "C:\\Program Files\\SXC\\include\\sxc-newlib\\**",
+                "C:\\Program Files\\SXC\\include\\sxc-lib\\**"
             ],
             "defines": [
                 "_DEBUG",
@@ -15,7 +17,7 @@
             "compilerPath": "/XInC2 Ressoures 062019/XInC2 Ressoures 062019/MinGW/bin/g++.exe",
             "cStandard": "c17",
             "cppStandard": "c++17",
-            "intelliSenseMode": "windows-gcc-x86",
+            "intelliSenseMode": "${default}",
             "compileCommands": "${workspaceFolder}/build/compile_commands.json"
         }
     ],
