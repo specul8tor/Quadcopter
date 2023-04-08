@@ -2,6 +2,7 @@
 #include <Thread.h>
 #include "bmi270.h"
 #include "globals.h"
+#include "utils.h"
 
 static inline void init_clock(void)
 {
