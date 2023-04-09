@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "GPIO.h"
 #include "A7125Radio.h"
 #include "A7125RadioData.h"
 #include "BaseBand.h"
@@ -8,6 +9,13 @@
 #include <chrono>
 #include <thread>
 #include <SoftTimer.h>
+#include <BBU.h>
+#include <SPI.h>
+#include <HW_BBU.h>
+#include <HW_SPI.h>
+#include <Port.h>
+
+
 
 
 using namespace std;
@@ -15,17 +23,14 @@ using namespace std;
 uint16_t first;
 static const uint16_t baud_rate = 21844;
 static const uint16_t start_word = 0xCCCC;
-
+uint16_t cfg0 = BBU_ENABLE | BBU_TX_ENABLE | BBU_BIDIRECTION_ENABLE | BBU_ROM_ENABLE;
+uint16_t cfg1 = 0;
 
 int main(){
 
-    //establish BBU class (it is a )
-    BaseBandUnit<BBU0> BBU(
-        uint16_t baud_rate, // replace with appropriate value
-        uint16_t cfg0 = BBU_enable | BBU_TX_ENABLE | BBU_BIDIRECTION_ENABLE | BBU_ROM_ENABLE,
-        uint16_t start_word, 
-        uint16_t cfg1 = 0,
-        );
+    
+    //establish BBU class
+    BaseBandUnit<BBU0> BBU(baud_rate, cfg0, start_word, cfg1);
 
     // cfg0 depending on what I put in it will be put into the bb0 register check user guide
     // BBU.h we can or the bits
@@ -33,20 +38,22 @@ int main(){
     // Bit rate = (sys_clk/8) * (1/(65535+1)) *(BBUbrg + 1) 
 
     using radioSPI = SerialPortInterface<SPI1>;
-    radioSPI spi;
+    radioSPI spi();
     //SPI1 is what the ginseng will use to connect to radio
 
     // port for BBUoutput
+    // GPIO_E = 4
     using PortE = spine::Port<GPIO_E, 0x100, 0x1>;
     decltype(PortE::CreateOutput<0>()) radio_cs;
 
     // port for pin that controls direction of BB0O (because its bidirectional)
+    // GPIO_H = 7
     using PortH = spine::Port<GPIO_H, 0x400, 0x4>;
     decltype(PortH::CreateOutput<2>()) radio_bbu_direction;
 
 
     // define SPI object
-    SpiWithChipSelect<decltype(spi), decltype(radio_cs)>  spi_with_cs(spi, radio_cs);
+    SpiWithChipSelect<decltype(spi), decltype(radio_cs)>  spi_with_cs(radioSPI spi(), radio_cs);
 
     //define a radio object
     using PAControl = IPAControl<PAControlTy>;
