@@ -7,8 +7,6 @@
 #include "WOutStream.h"
 #include <chrono>
 #include <thread>
-#include <SoftTimer.h>
-
 
 using namespace std;
 
@@ -22,15 +20,18 @@ int main(){
     //establish BBU class (it is a )
     BaseBandUnit<BBU0> BBU(
         uint16_t baud_rate, // replace with appropriate value
-        uint16_t cfg0 = BBU_enable | BBU_TX_ENABLE | BBU_BIDIRECTION_ENABLE | BBU_ROM_ENABLE,
+        uint16_t cfg0 = BBU_enable | BBU_RAW_ENABLE | BBU_USE_CLK_IN | BBU_CLK_DETECT_ENABLE | BBU_CLK_ENABLE | BBU_CLK_IN_RISING_EDGE | BBU_RX_MODE_RET_TO_ZERO | BBU_BIDIRECTION_ENABLE | BBU_EXT_CLK_TO_INC,
+        // should we use raw enable? Force hunt mode?
         uint16_t start_word, 
         uint16_t cfg1 = 0,
         );
 
     // cfg0 depending on what I put in it will be put into the bb0 register check user guide
     // BBU.h we can or the bits
-    // baud rate target is 2.048 Mb/second // use formula in user guide
+    // baud rate target is 2.048 mb/second // use formula in user guide
     // Bit rate = (sys_clk/8) * (1/(65535+1)) *(BBUbrg + 1) 
+    // sys_clk = 24.576 MHz
+    // BBUbrg = -0.956
 
     using radioSPI = SerialPortInterface<SPI1>;
     radioSPI spi;
@@ -69,58 +70,37 @@ int main(){
 
     //define the baseband
     //establish a clock type
-    SoftTimer<decltype(BBU)> timer(BBU);
-    SoftTimer<decltype(BBU)> poll_cycle_timer(BBU);
-    SoftTimer<uint16_t>sending(); // clock constant?
+
+    EncoderStrategy Edata;
+
+    Edata.Configure = 1;
+    Edata.Reset = 4;
+    // what are the crc
+    // forward error correction
 
     BaseBand<BaseBandUnit<BBU0>> base_band(BBU, start_word);
     std::array<uint16_t, 20> data;
-    uint16_t value = 1000;
-
-    uint16_t LED = 0x0001;
-
-    radio.ChangeChannel(25); // channels go from 0-49
-
-    poll_cycle_timer.Start(0);
     while (true) {
-        poll_cycle_timer.Tick(1000);
 
-        // radio.SwitchToReceive();
-        // timer.Start(value);
+        radio.SwitchToReceive();
 
-        // if (auto win = base_band.TryAcquireInputStream(timer, EncoderStrategy::None)) {
-        //     //deal with the win
-        //     for (uint16_t i = 0; i < 20; i++) {
-        //         data[i] = win.GetWordWithNoCrcOrFec();
-        //     }
-        // }
-
-        // timer.Wait();
-        // timer.Start(value); // design
-        // // wait for a milisecond
-        // // baud rate relates to ticks
-
-        // radio.SwitchToTransmit(0);
-
-        // if (auto wout = base_band.TryAcquireOutputStream()) {
-        //     for (auto& elem: data) {
-        //         wout.PushWordWithoutEncoding(elem);
-        //     }
-        // }
-       // timer.Wait();
-
-        
-        //this is for turning on an LED:
+        if (auto win = base_band.TryAcquireInputStream(timer, crc, fec)) {
+            //deal with the win
+            for (uint16_t i = 0; i < 20; i++) {
+                data[i] = win.GetWordWithNoCrcOrFec();
+            }
+        }
+    
+        this_thread::sleep_for(std::chrono::milliseconds(1)); // wait for a milisecond
 
         radio.SwitchToTransmit(0);
 
         if (auto wout = base_band.TryAcquireOutputStream()) {
-                wout.PushWordWithoutEncoding(LED);
+            for (auto& elem: data) {
+                wout.PushWordWithoutEncoding(elem);
+            }
         }
 
-        
-        
-       poll_cycle_timer.Wait();
     }
 
     return 0;
