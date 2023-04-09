@@ -4,9 +4,10 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
-                "C:\\Program Files\\SXC\\include\\**",
-                "C:\\Program Files\\SXC\\include\\sxc-newlib\\**",
-                "C:\\Program Files\\SXC\\include\\sxc-lib\\**"
+                "C:\\Program Files\\SXC\\include\\sxc-lib\\",
+                "C:\\Program Files\\SXC\\include\\sxc-newlib\\",
+                "/XInC2 Ressoures 062019/XInC2 Ressoures 062019/MinGW/include/c++/9.2.0",
+                "/XInC2 Ressoures 062019/XInC2 Ressoures 062019/MinGW/include/c++/9.2.0/x86_64-w64-mingw32"
             ],
             "defines": [
                 "_DEBUG",
