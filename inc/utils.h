@@ -3,6 +3,7 @@
 
 #include <XPD.h>
 #include <I2C.h>
+#include "globals.h"
 
 SXC_INLINE uint16_t i2c_read_value(uint16_t dest_addr, uint16_t dest_reg, uint8_t nack, I2C_Pin_Pair const* pins){
   i2c_write_to_addr(dest_addr, dest_reg, pins);
@@ -46,7 +47,7 @@ static inline void wait_ms(size_t ms)
 
 static inline void blink_leds(uint8_t led, uint8_t num_blinks, size_t delay_ms){
 
-    for (uint8_t i = 0; i <= 3; i++){
+    for (uint8_t i = 0; i < num_blinks; i++){
       globalPin_write(ON, &all_leds[led].pwm_out);
       wait_ms(delay_ms);
       globalPin_write(OFF, &all_leds[led].pwm_out);
