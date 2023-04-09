@@ -516,20 +516,18 @@ static void bmi270_init(){
 
 static int get_IMU(){
 
-  // int16_t acce_gyro_data[12];
   uint8_t print_flag = 0;
   int16_t vals[6];
   int16_t * data = acce_gyro_data;
   
   xpd_puts("\n| ACCE X | ACCE Y | ACCE Z | GYRO X | GYRO Y | GYRO Z |\n");
-  // wait_ms(1000);
   while (1) {
     i2c_read_from_buffer(bmiI2CAddr, ACC_X_LSB, 12, data, &bmi_pins); 
 
     for (uint8_t i = 0; i < 6; i++){
       vals[i] = (data[i*2+1]<<8) + data[i*2];
-      //vals[i] = (*(data+i*2+1)<<8) + *(data+i*2);
     }
+
 #ifdef VERBOSE
     if (print_flag % 10 == 0){
       print_int("\r  ", vals[0], XPD_Flag_Hex, 0);
