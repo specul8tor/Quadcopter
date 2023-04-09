@@ -7,6 +7,10 @@
         "xpd.h": "c",
         "thread.h": "c",
         "ioconfig.h": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "bmi2_ois.h": "c",
+        "bmi270.h": "c",
+        "bmi2.h": "c",
+        "i2c.h": "c"
     }
 }
