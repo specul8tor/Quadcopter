@@ -47,7 +47,7 @@ static inline void wait_ms(size_t ms)
 
 static inline void blink_leds(uint8_t led, uint8_t num_blinks, size_t delay_ms){
 
-    for (uint8_t i = 0; i <= 3; i++){
+    for (uint8_t i = 0; i < num_blinks; i++){
       globalPin_write(ON, &all_leds[led].pwm_out);
       wait_ms(delay_ms);
       globalPin_write(OFF, &all_leds[led].pwm_out);
