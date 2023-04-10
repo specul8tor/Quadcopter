@@ -41,10 +41,15 @@ typedef struct MOTOR_DSHOT {
 
 #define MOTOR1 { GPIO_D, io_PD4, 0x10, Polar_ActiveHigh }
 #define MOTOR2 { GPIO_D, io_PD5, 0x20, Polar_ActiveHigh }
-#define MOTOR3 { GPIO_D, io_PD6, 0x30, Polar_ActiveHigh }
-#define MOTOR4 { GPIO_D, io_PD7, 0x40, Polar_ActiveHigh }
+#ifdef DEV
+#define MOTOR3 { GPIO_C, io_PC2, 0x4, Polar_ActiveHigh }
+#define MOTOR4 { GPIO_C, io_PC3, 0x8, Polar_ActiveHigh }
+#else 
+#define MOTOR3 { GPIO_D, io_PD6, 0x40, Polar_ActiveHigh }
+#define MOTOR4 { GPIO_D, io_PD7, 0x80, Polar_ActiveHigh }
+#endif
 
-MOTOR_DSHOT motors[NUM_MOTORS] = { { MOTOR1, 682}, { MOTOR2, 48}, { MOTOR3, 2047}, { MOTOR4, 0} };//, MOTOR2, MOTOR3, MOTOR4};
+MOTOR_DSHOT motors[NUM_MOTORS] = { { MOTOR1, 48}, { MOTOR2, 48}, { MOTOR3, 48}, { MOTOR4, 48} };
 
 int16_t acce_gyro_data[12];
 

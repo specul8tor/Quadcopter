@@ -47,8 +47,8 @@ static void init(){
     globalPin_write(ON, &all_leds[1].pwm_out);
     
     for(size_t i = 0; i < NUM_MOTORS; i++){
-      thread_setup(motor_thread, &motors[i],1+i);
-      thread_run(1+i);
+      thread_setup(motor_thread, &motors[i],2+i);
+      thread_run(2+i);
     }
 
 }
