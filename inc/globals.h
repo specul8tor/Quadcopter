@@ -7,7 +7,7 @@
 #define INIT
 // #define DEV
 #define VERBOSE
-// #define CONFIG_FILE
+#define CONFIG_FILE
 
 #ifdef DEV
 const enum crystal_freq kCrysF = crys_12_288_MHz;
