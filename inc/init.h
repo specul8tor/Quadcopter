@@ -3,6 +3,7 @@
 #include "globals.h"
 #include "utils.h"
 #include "esc.h"
+#include "keys.h"
 
 static inline void init_clock(void)
 {
@@ -34,6 +35,11 @@ static void* motor_thread(void* ptr){
   }
 }
 
+static void* key_thread(void* ptr){
+  key_cmd();
+  return NULL;
+}
+
 static void init(){
 
     xpd_puts("\nHello World\n");
@@ -50,5 +56,8 @@ static void init(){
       thread_setup(motor_thread, &motors[i],2+i);
       thread_run(2+i);
     }
+
+    thread_setup(key_thread, NULL, 6);
+    thread_run(6);
 
 }

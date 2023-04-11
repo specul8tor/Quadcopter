@@ -35,27 +35,24 @@ static uint16_t dshot_crc(uint16_t throttle){
 }
 
 static void send_dshot(uint16_t throttle, GlobalPin* motor){
-    // if(!motor->io_port == io_PD7){
-    //     print_int("throttle: ", throttle, XPD_Flag_Hex,1);
-    // }
     uint16_t packet = dshot_crc(throttle);
-    // print_int("port :", motor->io_port, XPD_Flag_UnsignedDecimal, 1);
-    // if(!motor->io_port == io_PD7){
-    //     print_int("CRC: ", packet, XPD_Flag_Hex,1);
-    //     print_int("size: ",sizeof(packet),XPD_Flag_UnsignedDecimal,1);
-    // }
+#ifdef VERBOSE_ESC
+    if(motor->io_port == io_PD7){
+        print_int("CRC: ", packet, XPD_Flag_Hex,1);
+        print_int("size: ",sizeof(packet),XPD_Flag_UnsignedDecimal,1);
+    }
+#endif
     for (uint8_t i = 0; i < 16; i++) {
         int bit = (packet >> i) & 1; // Shift the integer to the right by i bits, then AND with 1 to get the i-th bit
-        // if(!motor->io_port == io_PD7){
-        //     print_int("bits: ", bit, XPD_Flag_Hex, 1);
-        // }
+#ifdef VERBOSE_ESC
+        if(motor->io_port == io_PD7){
+            print_int("bits: ", bit, XPD_Flag_Hex, 1);
+        }
+#endif
         if (bit){
             dshot_1(motor);
         }
         else{
-            // if(!motor->io_port == io_PD7){
-            //     xpd_puts("here??\n");
-            // }
             dshot_0(motor);
         }
   }
