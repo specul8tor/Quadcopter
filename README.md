@@ -1,6 +1,6 @@
 # Quadcopter
 
-Capstone project for ECE 490 for the University of Alberta.
+Capstone project for ECE 490/491 for the University of Alberta.
 
 ## Initialization
 
