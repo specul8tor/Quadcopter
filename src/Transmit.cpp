@@ -1,4 +1,4 @@
-#include <stdio.h>
+//#include <stdio.h>
 #include "GPIO.h"
 #include "A7125Radio.h"
 #include "A7125RadioData.h"
@@ -6,8 +6,9 @@
 #include "IRadio.h"
 #include "WInStream.h"
 #include "WOutStream.h"
-#include <chrono>
-#include <thread>
+#include "GinsengPAControl.h"
+//#include <chrono>
+//#include <thread>
 #include <SoftTimer.h>
 #include <BBU.h>
 #include <SPI.h>
@@ -39,7 +40,7 @@ int main(){
     // Bit rate = (sys_clk/8) * (1/(65535+1)) *(BBUbrg + 1) 
 
     using radioSPI = SerialPortInterface<SPI1>;
-    radioSPI spi();
+    radioSPI spi(_49_152_MHz);
     //SPI1 is what the ginseng will use to connect to radio
 
     // port for BBUoutput
@@ -54,10 +55,10 @@ int main(){
 
 
     // define SPI object
-    SpiWithChipSelect<decltype(spi), decltype(radio_cs)>  spi_with_cs(radioSPI spi(), radio_cs);
+    SpiWithChipSelect<radioSPI, decltype(radio_cs)>  spi_with_cs(spi, radio_cs);
 
     //define a radio object
-    using PAControl = IPAControl<PAControlTy>;
+    using PAControl = IPAControl<GinsengPAControl>;
     PAControl pa_control;
 
     //define configure parameters
@@ -66,8 +67,8 @@ int main(){
 
     A7125Radio<
         ConfigParam,
-        PAControl,
-        SpiWithChipSelect,
+        GinsengPAControl,
+        decltype(spi_with_cs),
         BaseBandUnit<BBU0>,
         PortE,
         decltype(radio_bbu_direction)
@@ -126,7 +127,6 @@ int main(){
                 wout.PushWordWithoutEncoding(LED);
         }
 
-        
         
        poll_cycle_timer.Wait();
     }
