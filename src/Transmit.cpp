@@ -39,6 +39,7 @@ int main(){
     // baud rate target is 2.048 Mb/second // use formula in user guide
     // Bit rate = (sys_clk/8) * (1/(65535+1)) *(BBUbrg + 1) 
 
+
     using radioSPI = SerialPortInterface<SPI1>;
     radioSPI spi(_49_152_MHz);
     //SPI1 is what the ginseng will use to connect to radio
