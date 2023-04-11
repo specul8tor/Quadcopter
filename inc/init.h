@@ -1,5 +1,6 @@
 #include <XPD.h>
 #include <Thread.h>
+#include "bmi270.h"
 #include "globals.h"
 #include "utils.h"
 #include "esc.h"
@@ -40,6 +41,12 @@ static void* key_thread(void* ptr){
   return NULL;
 }
 
+static void* IMU_thread(void *ptr)
+{
+    get_IMU();
+    return NULL;
+}
+
 static void init(){
 
     xpd_puts("\nHello World\n");
@@ -47,10 +54,15 @@ static void init(){
     init_clock();
     led_init();
     motor_init();
+    bmi270_init();
+
 
     globalPin_write(ON, &all_leds[0].pwm_out);
     blink_leds(1, 4, 500);
     globalPin_write(ON, &all_leds[1].pwm_out);
+    
+    thread_setup(IMU_thread, NULL, 1);
+    thread_run(1);
     
     for(size_t i = 0; i < NUM_MOTORS; i++){
       thread_setup(motor_thread, &motors[i],2+i);

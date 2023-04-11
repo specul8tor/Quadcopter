@@ -11,7 +11,6 @@
 #define VERBOSE_KEY
 // #define VERBOSE_ESC
 
-
 #ifdef DEV
 const enum crystal_freq kCrysF = crys_12_288_MHz;
 #else
