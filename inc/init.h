@@ -3,6 +3,8 @@
 #include "bmi270.h"
 #include "globals.h"
 #include "utils.h"
+#include "esc.h"
+#include "keys.h"
 
 static inline void init_clock(void)
 {
@@ -18,6 +20,27 @@ static void led_init()
     return;
 }
 
+static void motor_init()
+{
+    for (size_t i = 0; i < NUM_MOTORS; i++){
+      io_set_config(DEFAULT_IO_CFG, motors[i].motor.io_port);
+      globalPin_set_dir(PinDir_Output, &motors[i].motor);
+    }
+    return;
+}
+
+static void* motor_thread(void* ptr){
+  MOTOR_DSHOT * motor = (MOTOR_DSHOT *)ptr;
+  while(1){
+    send_dshot(motor->throttle, &motor->motor);
+  }
+}
+
+static void* key_thread(void* ptr){
+  key_cmd();
+  return NULL;
+}
+
 static void* IMU_thread(void *ptr)
 {
     get_IMU();
@@ -30,14 +53,23 @@ static void init(){
     wait_ms(20);
     init_clock();
     led_init();
+    motor_init();
     bmi270_init();
+
 
     globalPin_write(ON, &all_leds[0].pwm_out);
     blink_leds(1, 4, 500);
     globalPin_write(ON, &all_leds[1].pwm_out);
-
-
+    
     thread_setup(IMU_thread, NULL, 1);
     thread_run(1);
+    
+    for(size_t i = 0; i < NUM_MOTORS; i++){
+      thread_setup(motor_thread, &motors[i],2+i);
+      thread_run(2+i);
+    }
+
+    thread_setup(key_thread, NULL, 6);
+    thread_run(6);
 
 }
