@@ -19,13 +19,14 @@ static void led_init()
 
 static void init(){
 
+    init_clock();
     xpd_puts("\nHello World\n");
     wait_ms(20);
-    init_clock();
     led_init();
-
+    globalPin_write(ON, &all_leds[2].pwm_out);
+    globalPin_write(ON, &all_leds[3].pwm_out);
     globalPin_write(ON, &all_leds[0].pwm_out);
-    blink_leds(1, 4, 500);
+    blink_leds(1, 4, 250);
     globalPin_write(ON, &all_leds[1].pwm_out);
 
 }
