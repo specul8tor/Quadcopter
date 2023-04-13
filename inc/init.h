@@ -2,6 +2,7 @@
 #include <Thread.h>
 #include "globals.h"
 #include "utils.h"
+#include "transmit.h"
 
 static inline void init_clock(void)
 {
@@ -17,6 +18,10 @@ static void led_init()
     return;
 }
 
+static void* transmit_thread(void* ptr){
+  transmit();
+}
+
 static void init(){
 
     init_clock();
@@ -28,5 +33,8 @@ static void init(){
     globalPin_write(ON, &all_leds[0].pwm_out);
     blink_leds(1, 4, 250);
     globalPin_write(ON, &all_leds[1].pwm_out);
+
+    thread_setup(transmit_thread, NULL, 1);
+    thread_run(1);
 
 }
