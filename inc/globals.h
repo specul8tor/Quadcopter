@@ -14,6 +14,8 @@
 #define VERBOSE_ESC
 #define VERBOSE_KEY
 
+#define KEYBOARD //enable if keyboard is used instead of controller
+
 #ifdef DEV
 const enum crystal_freq kCrysF = crys_12_288_MHz;
 #else

@@ -4,7 +4,11 @@
 #include "globals.h"
 #include "utils.h"
 #include "esc.h"
+#ifdef KEYBOARD
 #include "keys.h"
+#else
+#include "recieve.h"
+#endif
 
 static inline void init_clock(void)
 {
@@ -36,10 +40,16 @@ static void* motor_thread(void* ptr){
   }
 }
 
+#ifdef KEYBOARD
 static void* key_thread(void* ptr){
   key_cmd();
   return NULL;
 }
+#else
+static void* recieve_thread(void* ptr){
+  recieve();
+}
+#endif
 
 static void* IMU_thread(void *ptr)
 {
@@ -68,7 +78,12 @@ static void init(){
       thread_run(2+i);
     }
 
+#ifdef KEYBOARD
     thread_setup(key_thread, NULL, 6);
     thread_run(6);
+#else
+    thread_setup(recieve_thread, NULL, 7);
+    thread_run(7);
+#endif
 
 }
