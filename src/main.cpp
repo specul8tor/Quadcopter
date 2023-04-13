@@ -13,6 +13,5 @@ int main(void)
     blink_leds(0, 1, 500);
 #endif
   }
-
   return 0;
 }

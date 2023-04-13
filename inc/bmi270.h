@@ -487,10 +487,10 @@ static void bmi270_init(){
 
   //Read and check Chip ID == 0 pg19
   uint16_t chip_id = i2c_read_value(bmiI2CAddr,BMI270_CHIP_ID_REG,1,&bmi_pins);
-  print_int("Chip ID: ", chip_id, XPD_Flag_Hex, 1);
+  print_int("BMI270 Chip ID: ", chip_id, XPD_Flag_Hex, 1);
 
   uint16_t config_size = 8192;
-  print_int("Config Size: ", config_size, XPD_Flag_UnsignedDecimal, 1);
+  print_int("Config File Size: ", config_size, XPD_Flag_UnsignedDecimal, 1);
 
   //uploading config file pg20
 #ifdef CONFIG_FILE
@@ -515,12 +515,13 @@ static void bmi270_init(){
 }
 
 static int get_IMU(){
-
+  wait_ms(1000);
   uint8_t print_flag = 0;
   int16_t vals[6];
   int16_t * data = acce_gyro_data;
-  
+#ifdef VERBOSE_IMU
   xpd_puts("\n| ACCE X | ACCE Y | ACCE Z | GYRO X | GYRO Y | GYRO Z |\n");
+#endif
   while (1) {
     i2c_read_from_buffer(bmiI2CAddr, ACC_X_LSB, 12, data, &bmi_pins); 
 
@@ -528,7 +529,7 @@ static int get_IMU(){
       vals[i] = (data[i*2+1]<<8) + data[i*2];
     }
 
-#ifdef VERBOSE
+#ifdef VERBOSE_IMU
     if (print_flag % 10 == 0){
       print_int("\r  ", vals[0], XPD_Flag_Hex, 0);
       print_int("   ", vals[1], XPD_Flag_Hex, 0);
@@ -537,8 +538,8 @@ static int get_IMU(){
       print_int("   ", vals[4], XPD_Flag_Hex, 0);
       print_int("   ", vals[5], XPD_Flag_Hex, 0);
     }
-    print_flag++;
 #endif
+    print_flag++;
   }
   return 1;
 }

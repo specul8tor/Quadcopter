@@ -4,12 +4,15 @@
 #include <SystemClock.h>
 #include <Structs.h>
 
-#define INIT
-// #define DEV
-#define CONFIG_FILE
+#define INIT //diasble if you dont want the leds in one thread
+// #define DEV // enable if you are using devboard (different pins)
+#define CONFIG_FILE //disable if you already have configured the BMI270
 
+
+/*ONLY ENABLE ONE AT ONE TIME OR ELSE THE OPERATION GETS HALTED*/
+#define VERBOSE_IMU
+#define VERBOSE_ESC
 #define VERBOSE_KEY
-// #define VERBOSE_ESC
 
 #ifdef DEV
 const enum crystal_freq kCrysF = crys_12_288_MHz;
@@ -51,7 +54,9 @@ typedef struct MOTOR_DSHOT {
 #define MOTOR4 { GPIO_D, io_PD7, 0x80, Polar_ActiveHigh }
 #endif
 
-MOTOR_DSHOT motors[NUM_MOTORS] = { { MOTOR1, 48}, { MOTOR2, 48}, { MOTOR3, 48}, { MOTOR4, 48} };
+#define START 167
+
+MOTOR_DSHOT motors[NUM_MOTORS] = { { MOTOR1, START}, { MOTOR2, START}, { MOTOR3, START}, { MOTOR4, START} };
 
 int16_t acce_gyro_data[12];
 

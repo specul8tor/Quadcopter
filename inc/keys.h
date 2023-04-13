@@ -2,6 +2,13 @@
 #include <XPD.h>
 #include "utils.h"
 
+/*
+motor[0] is motor 1 on pcb
+motor[1] is motor 2 on pcb
+motor[2] is motor 3 on pcb
+motor[3] is motor 4 on pcb
+*/
+
 #define W 119
 #define A 97
 #define S 115
@@ -12,100 +19,103 @@
 #define L 108
 #define R 114
 
+#define DELAY 1000
+#define STEP 100
+
 static void up(){
-    if (motors[0].throttle == 48){
-        motors[0].throttle += 199;
-        motors[1].throttle += 199;
-        motors[2].throttle += 199;
-        motors[3].throttle += 199;
-    }
-    else if(!(motors[0].throttle == 1847)){
-        motors[0].throttle += 200;
-        motors[1].throttle += 200;
-        motors[2].throttle += 200;
-        motors[3].throttle += 200;
-    }
+    // if (motors[0].throttle == 48){
+    //     motors[0].throttle += 199;
+    //     motors[1].throttle += 199;
+    //     motors[2].throttle += 199;
+    //     motors[3].throttle += 199;
+    // }
+    // else if(!(motors[0].throttle == 1847)){
+        motors[0].throttle += STEP;
+        motors[1].throttle += STEP;
+        motors[2].throttle += STEP;
+        motors[3].throttle += STEP;
+    // }
 }
 
 static void down(){
-    if(motors[0].throttle != 48){
-        motors[0].throttle -= 200;
-        motors[1].throttle -= 200;
-        motors[2].throttle -= 200;
-        motors[3].throttle -= 200;
-    }
+    // if(motors[0].throttle != 48){
+        motors[0].throttle -= STEP;
+        motors[1].throttle -= STEP;
+        motors[2].throttle -= STEP;
+        motors[3].throttle -= STEP;
+    // }
 }
 
 static void right(){
-    motors[0].throttle += 200;
-    motors[1].throttle += 200;
-    motors[2].throttle -= 200;
-    motors[3].throttle -= 200;
-    wait_ms(2000);
-    motors[0].throttle -= 200;
-    motors[1].throttle -= 200;
-    motors[2].throttle += 200;
-    motors[3].throttle += 200;
+    motors[0].throttle += STEP;
+    motors[1].throttle += STEP;
+    motors[2].throttle -= STEP;
+    motors[3].throttle -= STEP;
+    wait_ms(DELAY);
+    motors[0].throttle -= STEP;
+    motors[1].throttle -= STEP;
+    motors[2].throttle += STEP;
+    motors[3].throttle += STEP;
 }
 
 static void left(){
-    motors[2].throttle += 200;
-    motors[3].throttle += 200;
-    motors[0].throttle -= 200;
-    motors[1].throttle -= 200;
-    wait_ms(1000);
-    motors[2].throttle -= 200;
-    motors[3].throttle -= 200;
-    motors[0].throttle += 200;
-    motors[1].throttle += 200;
+    motors[2].throttle += STEP;
+    motors[3].throttle += STEP;
+    motors[0].throttle -= STEP;
+    motors[1].throttle -= STEP;
+    wait_ms(DELAY);
+    motors[2].throttle -= STEP;
+    motors[3].throttle -= STEP;
+    motors[0].throttle += STEP;
+    motors[1].throttle += STEP;
 }
 
 static void forward(){
-    motors[0].throttle += 200;
-    motors[2].throttle += 200;
-    motors[1].throttle -= 200;
-    motors[3].throttle -= 200;
-    wait_ms(1000);
-    motors[0].throttle -= 200;
-    motors[2].throttle -= 200;
-    motors[1].throttle += 200;
-    motors[3].throttle += 200;
+    motors[0].throttle += STEP;
+    motors[2].throttle += STEP;
+    motors[1].throttle -= STEP;
+    motors[3].throttle -= STEP;
+    wait_ms(DELAY);
+    motors[0].throttle -= STEP;
+    motors[2].throttle -= STEP;
+    motors[1].throttle += STEP;
+    motors[3].throttle += STEP;
 }
 
 static void backward(){
-    motors[1].throttle += 200;
-    motors[3].throttle += 200;
-    motors[0].throttle -= 200;
-    motors[2].throttle -= 200;
-    wait_ms(1000);
-    motors[1].throttle -= 200;
-    motors[3].throttle -= 200;
-    motors[0].throttle += 200;
-    motors[2].throttle += 200;
+    motors[1].throttle += STEP;
+    motors[3].throttle += STEP;
+    motors[0].throttle -= STEP;
+    motors[2].throttle -= STEP;
+    wait_ms(DELAY);
+    motors[1].throttle -= STEP;
+    motors[3].throttle -= STEP;
+    motors[0].throttle += STEP;
+    motors[2].throttle += STEP;
 }
 
 static void rotate_right(){
-    motors[0].throttle += 200;
-    motors[3].throttle += 200;
-    motors[1].throttle -= 200;
-    motors[2].throttle -= 200;
-    wait_ms(1000);
-    motors[0].throttle -= 200;
-    motors[3].throttle -= 200;
-    motors[1].throttle += 200;
-    motors[2].throttle += 200;
+    motors[0].throttle += STEP;
+    motors[3].throttle += STEP;
+    motors[1].throttle -= STEP;
+    motors[2].throttle -= STEP;
+    wait_ms(DELAY);
+    motors[0].throttle -= STEP;
+    motors[3].throttle -= STEP;
+    motors[1].throttle += STEP;
+    motors[2].throttle += STEP;
 }
 
 static void rotate_left(){
-    motors[0].throttle -= 200;
-    motors[3].throttle -= 200;
-    motors[1].throttle += 200;
-    motors[2].throttle += 200;
-    wait_ms(1000);
-    motors[0].throttle += 200;
-    motors[3].throttle += 200;
-    motors[1].throttle -= 200;
-    motors[2].throttle -= 200;
+    motors[0].throttle -= STEP;
+    motors[3].throttle -= STEP;
+    motors[1].throttle += STEP;
+    motors[2].throttle += STEP;
+    wait_ms(DELAY);
+    motors[0].throttle += STEP;
+    motors[3].throttle += STEP;
+    motors[1].throttle -= STEP;
+    motors[2].throttle -= STEP;
 }
 
 static void stop(){

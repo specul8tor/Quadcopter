@@ -49,13 +49,12 @@ static void* IMU_thread(void *ptr)
 
 static void init(){
 
-    xpd_puts("\nHello World\n");
-    wait_ms(20);
+    xpd_puts("\nHello Wrld\n\n");
+    wait_ms(5000);
     init_clock();
     led_init();
     motor_init();
     bmi270_init();
-
 
     globalPin_write(ON, &all_leds[0].pwm_out);
     blink_leds(1, 4, 500);
